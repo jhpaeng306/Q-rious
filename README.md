@@ -4,32 +4,27 @@
 
 
 ## Project description
-In our project, we built the Quantum Neural Network that works only with single shot. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
+In our project, we built the Quantum Neural Network that works only with single shot by assigning wavefunction to lables. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
 
-### Encoder unitary gate : $U(\theta, w, b)$
+### Assigning the wavefunction : $U(\theta, w, b)$
 
-First part encodes the input with appropriate weights ($w$) and bias ($b$) to construct an unitary gate working on $k$ qubits, where $2^k \geq m$. We refer such unitary matrix as $U(\theta, w, b)$ where $\theta$ is a parameter vector of given input data. We aim to construct this unitary matrix and $w, b$ to satisfy the conditions
-- $U(\theta^A, w,b) U(\tilde{\theta}^A, w, b)^\dagger=I$ where $\theta^A$ and $\tilde{\theta}^A$ are inputs with identical label $A$.
-- 다를 경우에 어케 되야 하지....
-
-When such conditions are satisfied, the unitary gate $U(\theta, w, b)$ represents the wave functions which are orthogonal at different labels, and identical at same labels. Thus, a function defined as a inner product between the wave functions of two input data, returns $1$ when their labels coincides, and returns $0$ when the labels differ. Note that only discriminating is sufficient to build a classifier since the ordering of the labels is irrelevant to the classified result.
-
-To obtain the desired encoder matrix, the following is the steps we used.
-1. 학습 방법 설명
+The front part of our circuit assigns each case to quantum state that corresponds to the label, where w and b are fixed parameters and $\theta$ is parameter containing information about datas. Which state is assigned to which label is automatically determined during the learning process. The circuit learns under the rule that the quantum state made by $U(\theta, w, b)$ should be orthogonal if the label of two datas are different and the size of inner product should be one if the label of two datas are same. Determining the size of innerproduct is quite easy, it is the probabilty of $000....00$ state for following circuit.
 
 
+Under this rule, if two datas A, B are classified as the same label($A=B$) and two datas B,C are classified as the different label($B~=C$), A and C are automatically classified as different $A~=C$, since the quantum states corresponding to A and B only differ by the phase. This characteristics allows a new learning scheme. When making a classifier with neural network, originaly the output is assigned arbitrarily, without knowing which assignment is most natural. To avoid this problem we can change the loss function, by making loss function which becomes smaller when output for same label becomes similar and ouput for different label becomes different. However, this approach needs many training sets, because eventhough the neural net learns $A=B$ and $B\neqC$ it doesn't know $A\neqC$. For quantum neural network, especially when the network can classify by single shot, it is not a problem. For two wavefunctions to be distinguishable by the measurement, especially by the single shot, they should be orthogonal, which means for quantum classifier, wavefunction resulting from neural network should be orthogonal for different label. If we additionally give condition that the absolute value of the innerproduct between wavefucntions resulting from the same label becomes one, the number of dataset needed for learning sameness and difference can reduce dramatically, because when $A=B$ and $~B=C$, $~A=C$ hold for this scheme.
 
-### Decoder gate : $V(\lambda)$
+The ansatz for $U(\theta, w, b)$ is given as follows.
 
-Second part decodes the resulting qubits which is generated via encoder unitary gate. The desired result after the decoder gate is to have a qubit that matches the label. 
-* 디코더가 하는 일 설명
-* 디코더가 만족해야하는 성질 설명
-* 디코더 학습 방법 설명.
+### Measuring : $V(\lambda)$
+Although the states are perfectly classified by assigning wavefunctions, we can't see the result. Appropriate measurement is needed to see the result. Any measurement is equivalent with applying a unitary transform and measuring qubits. The back part of our circuit finds this unitary transform. We use the same ansatz, with parameters independent with the data
+
+Since the states with same labels are similar learning for whole dataset is not needed. Only one data from each label are needed to determine the parameters. Also, since the states with different labels are orthogonal, appropriate measurement that distinguishes label by a single shot should exist.
+
 
 
 ## Key advantages of the Project
 강점을 가지는 이유 2~3중 서술
-
+For a classical computer, the learning need not be perfect, since the result can be determined if the crieteria is satisfied. However, for quantum neural network, if the result can not be determined by a single shot, there is always a chance for statistical noise to change the result. Inspired by the Qhack problems requiring discrimination by one shot measurement, which our team solved with this scheme, 
 
 Thus, our project shows advantages for the problems where
 - situation 1
