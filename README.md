@@ -23,7 +23,6 @@ Since the states with same labels are similar learning for whole dataset is not 
 
 
 ## Key advantages of the Project
-강점을 가지는 이유 2~3중 서술
 For a classical computer, the learning need not be perfect, since the result can be determined if the crieteria is satisfied. However, for quantum neural network, if the result can not be determined by a single shot, there is always a chance for statistical noise to change the result. Inspired by the Qhack problems requiring discrimination by one shot measurement, which our team solved with this scheme, 
 
 Thus, our project shows advantages for the problems where
@@ -32,11 +31,6 @@ Thus, our project shows advantages for the problems where
 
 ## Code description
 preFunc function shows the structure of the quantum circuit. We followed the structure of EfficientSU2 in qiskit. 
-
-
-
-## Power-Up plan
-TBD
 
 
 ## File description
