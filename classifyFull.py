@@ -1,7 +1,7 @@
 import pennylane as qml
 import pandas as pd
 from pennylane import numpy as np
-qubitn=3
+qubitn=2
 dev = qml.device("lightning.qubit", wires=range(qubitn))
 
 def preFuncPair(weight, bias, data1, data2):
@@ -154,6 +154,7 @@ def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,ba
             else:
                 batchX = np.array(pairs[batch_size*j:batch_size*(j+1)],requires_grad=False)
                 batchY = np.array(index[batch_size*j:datan],requires_grad=False)
+            if (j==0): print(cost(weight, bias, postParam, batchX, batchY))
             weight, bias, postParam, _, _ = optimizer.step(cost, weight, bias, postParam, batchX, batchY)
             print(i,j)
             file=open('savePost.txt','wt')
@@ -179,11 +180,11 @@ optimizer = qml.AdamOptimizer()
 preDatan = prePairs.shape[0]
 postDatan = postPairs.shape[0]
 steps = 100
-minBatchSize = 149
-testBatchSize = 149
+minBatchSize = 150
+testBatchSize = 150
 batchLoop = 1
-preLayerN=2
-postLayerN=2
+preLayerN=1
+postLayerN=1
 weight = np.random.randn(preLayerN,4,qubitn*2)
 bias = np.random.randn(preLayerN,qubitn*2)
 postParam = np.random.randn(qubitn*2*postLayerN)
