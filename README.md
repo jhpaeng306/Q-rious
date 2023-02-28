@@ -17,6 +17,7 @@ First part encodes the input with appropriate weights ($w$) and bias ($b$) to co
 The key ideas used in our project are
 - idea 1
 - idea 2
+test
 
 ## Key advantages of the Project
 강점을 가지는 이유 2~3중 서술
