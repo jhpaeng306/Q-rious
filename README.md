@@ -29,7 +29,7 @@ The ansatz for $U(x, w, b)$ is given as follows.
 ![preFunc](https://user-images.githubusercontent.com/124068470/221949350-a31aa87a-73ca-4cc5-b911-7732e592ed72.png)
 
 ### Measuring : $V(\lambda)$
-Although the states are perfectly classified by assigning wavefunctions, we can't see the result. Appropriate measurement is needed to see the result. Any measurement is equivalent with applying a unitary transform and measuring qubits. The back part of our circuit finds this unitary transform. We use the same ansatz, with parameters independent with the data
+Although the states are perfectly classified by assigning wavefunctions, we can't see the result. Appropriate measurement is needed to see the result. Any measurement is equivalent with applying a unitary transform and measuring qubits. The back part of our circuit finds this unitary transform. We use the same ansatz, with parameters independent with the data.
 
 Since the resulting states with the data of same labels are similar, learning for whole dataset is not needed. Only one or partial number of data from each label are required to determine the parameters. Also, since the states with different labels are orthogonal, appropriate measurement that distinguishes label by a single shot should exist.
 
