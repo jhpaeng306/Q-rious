@@ -26,6 +26,11 @@ Thus, our project shows advantages for the problems where
 - situation 1
 - situation 2
 
+## Code description
+preFunc function shows the structure of the quantum circuit. We followed the structure of EfficientSU2 in qiskit. 
+
+
+
 ## Power-Up plan
 TBD
 
