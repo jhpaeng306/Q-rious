@@ -140,6 +140,7 @@ def preTrain(cost,weight,bias,pairs,index,minBatchSize,datan,steps,batchLoop):
                     file.write(']')
             file.close()
             print(cost(weight, bias, batchX, batchY))
+    return weight,bias
 
 def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,batchLoop):
     weight=np.array(weight,requires_grad=True)
@@ -166,7 +167,41 @@ def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,ba
                 else:
                     file.write(']')
             file.close()
+            file=open('saveWeight.txt','wt')
+            file.write('[')
+            for i1 in range(weight.shape[0]):
+                file.write('[')
+                for j1 in range(weight.shape[1]):
+                    file.write('[')
+                    for k1 in range(weight.shape[2]-1):
+                        file.write(str(weight[i1,j1,k1])+',')
+                    file.write(str(weight[i1,j1,weight.shape[2]-1])+']')
+                    if (j1<weight.shape[1]-1):
+                        file.write(',')
+                    else:
+                        file.write(']')
+                if (i1<weight.shape[0]-1):
+                    file.write(',')
+                else:
+                    file.write(']')
+            file.close()
+            file=open('saveBias.txt','wt')
+            file.write('[')
+            for i1 in range(bias.shape[0]):
+                file.write('[')
+                for j1 in range(bias.shape[1]):
+                    file.write(str(bias[i1,j1]))
+                    if (j1<bias.shape[1]-1):
+                        file.write(',')
+                    else:
+                        file.write(']')
+                if (i1<bias.shape[0]-1):
+                    file.write(',')
+                else:
+                    file.write(']')
+            file.close()
             print(cost(weight, bias, postParam, batchX, batchY))
+    return weight,bias,postParam
 
 
 preData = pd.read_csv('simple_iris.csv').iloc[:,1:].to_numpy()
@@ -179,7 +214,7 @@ postIndex = np.array(preData[:,8],requires_grad=False)
 optimizer = qml.AdamOptimizer()
 preDatan = prePairs.shape[0]
 postDatan = postPairs.shape[0]
-steps = 100
+steps = 25
 minBatchSize = 150
 testBatchSize = 150
 batchLoop = 1
@@ -192,14 +227,19 @@ postParam = np.random.randn(qubitn*2*postLayerN)
 #bias = np.array([[0.8196677430971514,-0.8238497120614565,0.8584789598445245,0.2812953802667046,1.09160041070184,-0.7583453919351755],[-1.625492353084568,-1.1734650177225792,-1.601175251630768,-0.3846155865137127,0.5078664665049263,0.32050876532856465],[-0.06787999905470525,1.3949084440984625,-0.017295867094159555,-1.1884255354533475,-1.6195029568284673,0.1239043395823184]])
 #postParam = np.array([0.5349930777400164,-1.3008440677810804,-0.5467252707337062,0.6045628582162251,-0.18028893455297237,-0.856647521715801,-0.44914886662345604,-0.7594230759517939,0.6320902557500857,-0.4101349636626384,-0.12624720217717364,0.23611551663039415,0.22435304607394552,1.2362119233894446,0.4861724130135441,1.0273249499570194,1.1891935485777947,0.40996898996276016,-2.2120127339667213,-0.4869621036904792,-0.9126613991135377,-0.15822843785499852,-0.34186686467527744,-0.6248203578613069])
 
-#preTrain(preCostFunction,weight,bias,prePairs,preIndex,minBatchSize,preDatan,steps,batchLoop)
-postTrain(postCostFunction,weight,bias,postParam,postPairs,postIndex,minBatchSize,postDatan,steps,batchLoop)
+weight,bias=preTrain(preCostFunction,weight,bias,prePairs,preIndex,minBatchSize,preDatan,steps,batchLoop)
+weight,bias,postParam=postTrain(postCostFunction,weight,bias,postParam,postPairs,postIndex,minBatchSize,postDatan,steps,batchLoop)
 
-getSample=np.random.randint(0, postDatan, (testBatchSize,))
-preBatchX = prePairs[getSample]
-preBatchY = preIndex[getSample]
-getSample=np.random.randint(0, postDatan, (testBatchSize,))
-postBatchX = postPairs[getSample]
-postBatchY = postIndex[getSample]
+#getSample=np.random.randint(0, postDatan, (testBatchSize,))
+#preBatchX = prePairs[getSample]
+#preBatchY = preIndex[getSample]
+#getSample=np.random.randint(0, postDatan, (testBatchSize,))
+#postBatchX = postPairs[getSample]
+#postBatchY = postIndex[getSample]
+
+preBatchX = prePairs
+preBatchY = preIndex
+postBatchX = postPairs
+postBatchY = postIndex
 print(preCostFunction(weight, bias, preBatchX, preBatchY))
 print(postCostFunction(weight, bias, postParam, postBatchX, postBatchY))
