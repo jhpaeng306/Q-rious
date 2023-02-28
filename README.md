@@ -43,8 +43,3 @@ Since the resulting states with the data of same labels are similar, learning fo
 
 
 
-
-
-
-
-preFunc : 
