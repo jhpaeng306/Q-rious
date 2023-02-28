@@ -5,7 +5,7 @@ from pennylane import numpy as np
 qubitn = 3
 dev = qml.device("lightning.qubit", wires=range(qubitn))
 
-# Data에 따라 달라지는 unitary operator를 만드는 circuit입니다
+#U(x,w,b): unitary circuit depending on data
 def preFunc(weight, bias, data):
     t = np.tensordot(data, weight, ((0), (1))) - bias
 
@@ -21,8 +21,8 @@ def preFunc(weight, bias, data):
         qml.RZ(t[layerN - 1, 2 * i + 1], wires=i)
 
 
-# data에 의존하지 않는 부분입니다
-# 물리적인 역할은 직교하는 wavefunction들을 측정하기 용이한 wavefunction들로 대응시켜주는 역할입니다.
+# V(\lambda): not dependent to data
+# Physical meaning is to find good measurement basis to distinguish orthogonal states
 def postfunc(params):
     N = len(params) // (qubitn * 2)
     for j in range(N):
@@ -32,7 +32,7 @@ def postfunc(params):
         for i in range(qubitn - 1):
             qml.CNOT(wires=[i, i + 1])
 
-# 전체 회로입니다
+# Full circuit
 @qml.qnode(dev)
 def fullCircuit(weight, bias, postParams, data):
     preFunc(weight, bias, data)
@@ -40,7 +40,7 @@ def fullCircuit(weight, bias, postParams, data):
     return qml.probs(wires=range(qubitn))
 
 
-# 최종적인 확률분포를 이용한 cost function입니다
+#Only mutually orthogonal cases are needed to learn
 def postCostFunction(weight, bias, postParams, dataSetsX):
     loss = 0
     for i in range(dataSetsX.shape[0]):
@@ -51,7 +51,7 @@ def postCostFunction(weight, bias, postParams, dataSetsX):
 
 
 
-# 최종적인 확률분포로 train을 하는 부분입니다
+# postTraining part
 def postTrain(cost, weight, bias, postParam, pairs, minBatchSize, datan, steps, batchLoop):
     weight = np.array(weight, requires_grad=False)
     bias = np.array(bias, requires_grad=False)
@@ -94,6 +94,8 @@ postParam=np.array(postParam, requires_grad=True)
 
 oneData = pd.read_csv('onedata_iris.csv').iloc[:, 1:].to_numpy()
 
+#Currently, state for Versicolor and Virginica are too similar to distinguish by measurement
+#Therefore, dataset in postPairs is just for distinguishing Setosa and Versicolor
 postPairs = np.array([[oneData[49,i] for i in range(4)]+[oneData[50,i] for i in range(4)],
                      ])
 
