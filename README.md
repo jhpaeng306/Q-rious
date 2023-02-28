@@ -4,6 +4,9 @@
 
 
 ## Project description
+In our project, we built the Quantum Neural Network that works only with single shot. Our Quantum Neural Network is composed with two parts. 
+First part encodes the input with appropriate weights ($w$) and bias ($b$) to construct an unitary gate working on $k$ qubits, where $2^k \geq m$.
+
 이번 프로젝트에선 single shot 만으로 label을 계산하는 quantum NN을 제작하였슴.
 우리의 NN은 총 두개로 이루어져 있음. 
 하나는 적절한 weight 와 bias로 입력된 인풋을 encode시켜 생성한 unitary이고, 다른 하나는 이 unitary의 결과를 토대로 label을 알아내는 decoder이다. 이때 decoder를 통해 나온 qubits는 레이블에 해당하는 one-hot vector에 대응하는 벡터에 가까운 값을 내보낸다. 
