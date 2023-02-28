@@ -4,6 +4,24 @@ from pennylane import numpy as np
 qubitn=2
 dev = qml.device("lightning.qubit", wires=range(qubitn))
 
+#Data에 따라 달라지는 unitary operator를 만드는 circuit입니다
+def preFunc(weight, bias, data):
+    t = np.tensordot(data, weight,((0),(1)))-bias
+
+    layerN=t.shape[0]
+    for j in range(layerN-1):
+        for i in range(t.shape[1]//2):
+            qml.RX(t[j,2*i],wires=i)
+            qml.RZ(t[j,2*i+1],wires=i)
+        for i in range(t.shape[1]//2-1):
+            qml.CNOT(wires=[i,i+1])
+    for i in range(t.shape[1]//2):
+        qml.RX(t[layerN-1,2*i],wires=i)
+        qml.RZ(t[layerN-1,2*i+1],wires=i)
+
+
+#두개의 Data에 대해 만들어지는 wavefucntion이 서로 직교하는 지 확인하는 circuit입니다.
+#0000000이 측정될 확률이 내적값의 크기가 됩니다.
 def preFuncPair(weight, bias, data1, data2):
     t = np.tensordot(data1, weight,((0),(1)))-bias
     T = np.tensordot(data2, weight,((0),(1)))-bias
@@ -29,22 +47,8 @@ def preFuncPair(weight, bias, data1, data2):
         qml.RZ(-T[0,2*i+1],wires=i)
         qml.RX(-T[0,2*i],wires=i)
 
-
-def preFunc(weight, bias, data):
-    t = np.tensordot(data, weight,((0),(1)))-bias
-
-    layerN=t.shape[0]
-    for j in range(layerN-1):
-        for i in range(t.shape[1]//2):
-            qml.RX(t[j,2*i],wires=i)
-            qml.RZ(t[j,2*i+1],wires=i)
-        for i in range(t.shape[1]//2-1):
-            qml.CNOT(wires=[i,i+1])
-    for i in range(t.shape[1]//2):
-        qml.RX(t[layerN-1,2*i],wires=i)
-        qml.RZ(t[layerN-1,2*i+1],wires=i)
-
-
+#data에 의존하지 않는 부분입니다
+#물리적인 역할은 직교하는 wavefunction들을 측정하기 용이한 wavefunction들로 대응시켜주는 역할입니다.
 def postfunc(params):
     N=len(params)//(qubitn*2)
     for j in range(N):
@@ -54,22 +58,26 @@ def postfunc(params):
         for i in range(qubitn-1):
             qml.CNOT(wires=[i,i+1])
 
+#앞쪽 circuit의 statevector를 줍니다.
 @qml.qnode(dev)
 def preCircuitTest(weight, bias, data):
     preFunc(weight, bias, data)
     return qml.state()
 
+#내적값을 줍니다
 @qml.qnode(dev)
 def preCircuitPair(weight, bias, data1, data2):
     preFuncPair(weight, bias, data1, data2)
     return qml.probs(wires=range(qubitn))
 
+#전체 회로입니다
 @qml.qnode(dev)
 def fullCircuit(weight,bias,postParams,data):
     preFunc(weight,bias,data)
     postfunc(postParams)
     return qml.probs(wires=range(qubitn))
 
+#내적값을 기반으로한 cost function입니다
 def preCostFunction(weight,bias,dataSetsX,dataSetsY):
     loss=0
     for i in range(dataSetsX.shape[0]):
@@ -77,6 +85,7 @@ def preCostFunction(weight,bias,dataSetsX,dataSetsY):
         loss += makeResult + (1-2*dataSetsY[i]) * makeResult
     return loss/dataSetsX.shape[0]
 
+#최종적인 확률분포를 이용한 cost function입니다
 def postCostFunction(weight,bias,postParams,dataSetsX,dataSetsY):
     loss=0
     for i in range(dataSetsX.shape[0]):
@@ -88,6 +97,8 @@ def postCostFunction(weight,bias,postParams,dataSetsX,dataSetsY):
             loss += np.sum((prob1-prob2)**2)
     return loss/dataSetsX.shape[0]
 
+#circuit으로 구한 내적값의 크기가 실제 내적값과 맞는 지 알아보기 위해 만든 함수입니다.
+#실제로 내적을 해서 preCostfunction을 구합니다.
 def preCostFunctionTest(weight,bias,dataSets):
     loss=0
     for i in range(dataSets.shape[0]):
@@ -95,7 +106,7 @@ def preCostFunctionTest(weight,bias,dataSets):
         loss += makeResult
     return loss/dataSets.shape[0]
 
-
+#내적값을 바탕으로 train하는 부분입니다
 def preTrain(cost,weight,bias,pairs,index,minBatchSize,datan,steps,batchLoop):
     for i in range(steps):
 #        batch_size=minBatchSize*(i+1)
@@ -145,6 +156,7 @@ def preTrain(cost,weight,bias,pairs,index,minBatchSize,datan,steps,batchLoop):
             print(cost(weight, bias, batchX, batchY))
     return weight,bias
 
+#최종적인 확률분포로 train을 하는 부분입니다
 def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,batchLoop):
     weight=np.array(weight,requires_grad=True)
     bias=np.array(bias,requires_grad=True)
@@ -209,12 +221,12 @@ def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,ba
 
 
 optimizer = qml.AdamOptimizer()
-steps = 100
+steps = 25
 minBatchSize = 150
 testBatchSize = 150
 batchLoop = 1
 preLayerN=1
-postLayerN=1
+postLayerN=2
 weight = np.random.randn(preLayerN,4,qubitn*2)
 bias = np.random.randn(preLayerN,qubitn*2)
 postParam = np.random.randn(qubitn*2*postLayerN)
@@ -231,7 +243,6 @@ preIndex = np.array(preData[:, 8],requires_grad=False)
 print(preCostFunction(weight, bias, prePairs, preIndex))
 print(postCostFunction(weight, bias, postParam, prePairs, preIndex))
 
-#weight,bias=preTrain(preCostFunction,weight,bias,prePairs,preIndex,minBatchSize,preDatan,steps,batchLoop)
 
 #getSample=np.random.randint(0, postDatan, (testBatchSize,))
 #preBatchX = prePairs[getSample]
@@ -251,8 +262,11 @@ for i in range(10):
     postIndex = np.array(preData[:,8],requires_grad=False)
     preDatan = prePairs.shape[0]
     postDatan = postPairs.shape[0]
-    
+
     weight,bias,postParam=postTrain(postCostFunction,weight,bias,postParam,postPairs,postIndex,minBatchSize,postDatan,steps,batchLoop)
+#    weight,bias=preTrain(preCostFunction,weight,bias,prePairs,preIndex,minBatchSize,preDatan,steps,batchLoop)
+#    weight,bias,postParam=postTrain(postCostFunction,weight,bias,postParam,postPairs,postIndex,minBatchSize,postDatan,1,batchLoop)
+    
 
 
     preData = pd.read_csv('pre_iris.csv').iloc[:,1:].to_numpy()
@@ -267,5 +281,5 @@ for i in range(10):
     postBatchX = postPairs
     postBatchY = postIndex
     print(preCostFunction(weight, bias, preBatchX, preBatchY))
-    print(postCostFunction(weight, bias, postParam, postBatchX, postBatchY))
+#    print(postCostFunction(weight, bias, postParam, postBatchX, postBatchY))
 
