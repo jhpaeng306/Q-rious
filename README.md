@@ -7,7 +7,7 @@
 In our project, we built the Quantum Neural Network that works only with single shot. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
 
 First part encodes the input with appropriate weights ($w$) and bias ($b$) to construct an unitary gate working on $k$ qubits, where $2^k \geq m$. We refer such unitary matrix as $U(\theta, w, b)$ where $\theta$ is a parameter vector of given input data. We aim to construct this unitary matrix and $w, b$ to satisfy the conditions
-- $U(\theta^A, w,b) U(\Tilde{\theta}^A, w, b)=I$ where $\theta^A$ and $\Tilde{\theta}^A$ are inputs with identical label $A$.
+- $U(\theta^A, w,b) U(\tilde{\theta}^A, w, b)=I$ where $\theta^A$ and $\tilde{\theta}^A$ are inputs with identical label $A$.
 - 다를 경우에 어케 되야 하지....
 
 When such conditions are satisfied, the unitary gate $U(\theta, w, b)$ represents the wave functions which are orthogonal at different labels, and identical at same labels. Thus, a function defined as a inner product between the wave functions of two input data, returns $1$ when their labels coincides, and returns $0$ when the labels differ. Note that only discriminating is sufficient to build a classifier since the ordering of the labels is irrelevant to the classified result.
