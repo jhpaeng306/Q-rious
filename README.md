@@ -12,6 +12,12 @@ First part encodes the input with appropriate weights ($w$) and bias ($b$) to co
 하나는 적절한 weight 와 bias로 입력된 인풋을 encode시켜 생성한 unitary이고, 다른 하나는 이 unitary의 결과를 토대로 label을 알아내는 decoder이다. 이때 decoder를 통해 나온 qubits는 레이블에 해당하는 one-hot vector에 대응하는 벡터에 가까운 값을 내보낸다. 
 (줄글로 한 3-4줄 설명)
 
+
+
+When such conditions are satisfied, the unitary gate $U(\theta, w, b)$ represents the wave functions which are orthogonal at different labels, and identical at same labels. Thus, a function defined as a inner product between the wave functions of two input data, returns $1$ when their labels coincides, and returns $0$ when the labels differ. Note that only discriminating is sufficient to build a classifier since the ordering of the labels is irrelevant to the classified result.
+
+Second part decodes the resulting qubits via encoder unitary gate. 
+
 우리의 아이디어는 같은 label이면 함수값 1을, 그렇지 않으면 0을 출력하는 함수를 학습시키는 것이다.
 
 The key ideas used in our project are
