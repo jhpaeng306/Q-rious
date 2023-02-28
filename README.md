@@ -36,7 +36,10 @@ Since the resulting states with the data of same labels are similar, learning fo
 
 
 ## Code and File description
-generator.py generates dataSet used for learning from iris.csv. Simple_iris.csv contains essential comparisons. preLearning.py optimizes $U(x, w, b)$ and postLearning.py optimizes $V(\lambda)$. getOutput.py has functions giving probabilities or single shot results of the full Circuit. Based on the probabilities, best classificaiton criteria was chosen. The classification result is saved in classificationResult.txt. For most cases Setosa is correctly classified to Setosa by single shot. Howeveer, other cases are misclassified to Setosa with about 30% of probability.
+* generator.py generates dataSet used for learning from iris.csv. 
+* Simple_iris.csv contains essential comparisons. 
+* preLearning.py optimizes $U(x, w, b)$ and postLearning.py optimizes $V(\lambda)$. 
+* getOutput.py has functions giving probabilities or single shot results of the full Circuit. Based on the probabilities, best classificaiton criteria was chosen. The classification result is saved in classificationResult.txt. For most cases Setosa is correctly classified to Setosa by single shot. Howeveer, other cases are misclassified to Setosa with about 30% of probability.
 
 
 
