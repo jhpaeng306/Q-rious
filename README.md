@@ -4,7 +4,7 @@
 
 
 ## Project description
-In our project, we built the Quantum Neural Network that works only with single shot by assigning wavefunction to lables. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
+In our project, we built the Quantum Neural Network that works with only single shot by assigning wavefunction to lables. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
 
 ### Assigning the wavefunction : $U(\theta, w, b)$
 
