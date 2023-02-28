@@ -104,7 +104,7 @@ def preTrain(cost,weight,bias,pairs,index,minBatchSize,datan,steps,batchLoop):
             else:
                 batchX = np.array(pairs[batch_size*j:batch_size*(j+1)],requires_grad=False)
                 batchY = np.array(index[batch_size*j:datan],requires_grad=False)
-            weight, bias, batchX, batchY = optimizer.step(cost, weight, bias, batchX, batchY)
+            weight, bias, _, _ = optimizer.step(cost, weight, bias, batchX, batchY)
             print(i,j)
             file=open('saveWeight.txt','wt')
             file.write('[')
@@ -142,8 +142,8 @@ def preTrain(cost,weight,bias,pairs,index,minBatchSize,datan,steps,batchLoop):
             print(cost(weight, bias, batchX, batchY))
 
 def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,batchLoop):
-    weight=np.array(weight,requires_grad=False)
-    bias=np.array(bias,requires_grad=False)
+    weight=np.array(weight,requires_grad=True)
+    bias=np.array(bias,requires_grad=True)
     for i in range(steps):
  #       batch_size=minBatchSize*(i+1)
         batch_size=minBatchSize
@@ -154,7 +154,7 @@ def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,ba
             else:
                 batchX = np.array(pairs[batch_size*j:batch_size*(j+1)],requires_grad=False)
                 batchY = np.array(index[batch_size*j:datan],requires_grad=False)
-            _, _, postParam, batchX, batchY = optimizer.step(cost, weight, bias, postParam, batchX, batchY)
+            weight, bias, postParam, _, _ = optimizer.step(cost, weight, bias, postParam, batchX, batchY)
             print(i,j)
             file=open('savePost.txt','wt')
             file.write('[')
@@ -168,22 +168,22 @@ def postTrain(cost,weight,bias,postParam,pairs,index,minBatchSize,datan,steps,ba
             print(cost(weight, bias, postParam, batchX, batchY))
 
 
-preData = pd.read_csv('pre_iris.csv').iloc[:,1:].to_numpy()
-postData = pd.read_csv('post_iris.csv').iloc[:,1:].to_numpy()
+preData = pd.read_csv('simple_iris.csv').iloc[:,1:].to_numpy()
+postData = pd.read_csv('simple_iris.csv').iloc[:,1:].to_numpy()
 prePairs = np.array(preData[:, 0:8],requires_grad=False)
 preIndex = np.array(preData[:, 8],requires_grad=False)
 postPairs = np.array(preData[:, 0:8],requires_grad=False)
 postIndex = np.array(preData[:,8],requires_grad=False)
 
-optimizer = qml.AdagradOptimizer()
+optimizer = qml.AdamOptimizer()
 preDatan = prePairs.shape[0]
 postDatan = postPairs.shape[0]
 steps = 100
-minBatchSize = 50
-testBatchSize = 1000
+minBatchSize = 149
+testBatchSize = 149
 batchLoop = 1
-preLayerN=3
-postLayerN=5
+preLayerN=2
+postLayerN=2
 weight = np.random.randn(preLayerN,4,qubitn*2)
 bias = np.random.randn(preLayerN,qubitn*2)
 postParam = np.random.randn(qubitn*2*postLayerN)
@@ -191,7 +191,7 @@ postParam = np.random.randn(qubitn*2*postLayerN)
 #bias = np.array([[0.8196677430971514,-0.8238497120614565,0.8584789598445245,0.2812953802667046,1.09160041070184,-0.7583453919351755],[-1.625492353084568,-1.1734650177225792,-1.601175251630768,-0.3846155865137127,0.5078664665049263,0.32050876532856465],[-0.06787999905470525,1.3949084440984625,-0.017295867094159555,-1.1884255354533475,-1.6195029568284673,0.1239043395823184]])
 #postParam = np.array([0.5349930777400164,-1.3008440677810804,-0.5467252707337062,0.6045628582162251,-0.18028893455297237,-0.856647521715801,-0.44914886662345604,-0.7594230759517939,0.6320902557500857,-0.4101349636626384,-0.12624720217717364,0.23611551663039415,0.22435304607394552,1.2362119233894446,0.4861724130135441,1.0273249499570194,1.1891935485777947,0.40996898996276016,-2.2120127339667213,-0.4869621036904792,-0.9126613991135377,-0.15822843785499852,-0.34186686467527744,-0.6248203578613069])
 
-preTrain(preCostFunction,weight,bias,prePairs,preIndex,minBatchSize,preDatan,steps,batchLoop)
+#preTrain(preCostFunction,weight,bias,prePairs,preIndex,minBatchSize,preDatan,steps,batchLoop)
 postTrain(postCostFunction,weight,bias,postParam,postPairs,postIndex,minBatchSize,postDatan,steps,batchLoop)
 
 getSample=np.random.randint(0, postDatan, (testBatchSize,))
