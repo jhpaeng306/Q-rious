@@ -22,6 +22,7 @@ test
 ## Key advantages of the Project
 강점을 가지는 이유 2~3중 서술
 
+
 Thus, our project shows advantages for the problems where
 - situation 1
 - situation 2
@@ -31,3 +32,7 @@ TBD
 
 
 ## File description
+
+(https://user-images.githubusercontent.com/124068470/221923133-2450187e-ae76-4525-a49e-5409a0a60a98.png)
+
+preFunc : 
