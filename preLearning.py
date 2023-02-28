@@ -6,7 +6,7 @@ qubitn = 3
 dev = qml.device("lightning.qubit", wires=range(qubitn))
 
 
-# Data에 따라 달라지는 unitary operator를 만드는 circuit입니다
+# U(x,w,b): circuit depending on the data
 def preFunc(weight, bias, data):
     t = np.tensordot(data, weight, ((0), (1))) - bias
 
@@ -21,9 +21,8 @@ def preFunc(weight, bias, data):
         qml.RX(t[layerN - 1, 2 * i], wires=i)
         qml.RZ(t[layerN - 1, 2 * i + 1], wires=i)
 
-
-# 두개의 Data에 대해 만들어지는 wavefucntion이 서로 직교하는 지 확인하는 circuit입니다.
-# 0000000이 측정될 확률이 내적값의 크기가 됩니다.
+# Circuit for calculating loss function(U(x^A,w,b)U^{\dagger}(x^B,w,b))
+# Probablity for 0000...00 is same with the size of the inner product
 def preFuncPair(weight, bias, data1, data2):
     t = np.tensordot(data1, weight, ((0), (1))) - bias
     T = np.tensordot(data2, weight, ((0), (1))) - bias
@@ -50,14 +49,14 @@ def preFuncPair(weight, bias, data1, data2):
         qml.RX(-T[0, 2 * i], wires=i)
 
 
-# 내적값을 줍니다
+#Zeroth element of return value gives innerproduct value
 @qml.qnode(dev)
 def preCircuitPair(weight, bias, data1, data2):
     preFuncPair(weight, bias, data1, data2)
     return qml.probs(wires=range(qubitn))
 
 
-# 전체 회로입니다
+#Full circuite
 @qml.qnode(dev)
 def fullCircuit(weight, bias, postParams, data):
     preFunc(weight, bias, data)
@@ -65,7 +64,8 @@ def fullCircuit(weight, bias, postParams, data):
     return qml.probs(wires=range(qubitn))
 
 
-# 내적값을 기반으로한 cost function입니다
+#Loss function based on inner product between wavefunctions
+#dataSetsY[i] is 1 if label is same and0 if label is different
 def preCostFunction(weight, bias, dataSetsX, dataSetsY):
     loss = 0
     for i in range(dataSetsX.shape[0]):
@@ -75,7 +75,7 @@ def preCostFunction(weight, bias, dataSetsX, dataSetsY):
 
 
 
-# 내적값을 바탕으로 train하는 부분입니다
+# Optimizing U(x,w,b)
 def preTrain(cost, weight, bias, pairs, index, minBatchSize, datan, steps, batchLoop):
     batch_size=datan
     for i in range(steps):
