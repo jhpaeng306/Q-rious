@@ -4,17 +4,14 @@
 
 
 ## Project description
-In our project, we built the Quantum Neural Network that works only with single shot. Our Quantum Neural Network is composed with two parts. 
-First part encodes the input with appropriate weights ($w$) and bias ($b$) to construct an unitary gate working on $k$ qubits, where $2^k \geq m$.
+In our project, we built the Quantum Neural Network that works only with single shot. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
 
-이번 프로젝트에선 single shot 만으로 label을 계산하는 quantum NN을 제작하였슴.
-우리의 NN은 총 두개로 이루어져 있음. 
-하나는 적절한 weight 와 bias로 입력된 인풋을 encode시켜 생성한 unitary이고, 다른 하나는 이 unitary의 결과를 토대로 label을 알아내는 decoder이다. 이때 decoder를 통해 나온 qubits는 레이블에 해당하는 one-hot vector에 대응하는 벡터에 가까운 값을 내보낸다. 
-(줄글로 한 3-4줄 설명)
-
-
+First part encodes the input with appropriate weights ($w$) and bias ($b$) to construct an unitary gate working on $k$ qubits, where $2^k \geq m$. We refer such unitary matrix as $U(\theta, w, b)$ where $\theta$ is a parameter vector of given input data. We aim to construct this unitary matrix and $w, b$ to satisfy the conditions
+- $U(\theta^A, w,b) U(\Tilde{\theta}^A, w, b)=I$ where $\theta^A$ and $\Tilde{\theta}^A$ are inputs with identical label $A$.
+- 다를 경우에 어케 되야 하지....
 
 When such conditions are satisfied, the unitary gate $U(\theta, w, b)$ represents the wave functions which are orthogonal at different labels, and identical at same labels. Thus, a function defined as a inner product between the wave functions of two input data, returns $1$ when their labels coincides, and returns $0$ when the labels differ. Note that only discriminating is sufficient to build a classifier since the ordering of the labels is irrelevant to the classified result.
+
 
 Second part decodes the resulting qubits via encoder unitary gate. 
 
