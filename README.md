@@ -10,7 +10,10 @@ In our project, we built the Quantum Neural Network that works with only single 
 
 ### Assigning the wavefunction : $U(x, w, b)$
 
-The front part of our circuit assigns the input data to a quantum state which corresponds to the correct label, where $w$ and $b$ are fixed parameters and $x$ is parameter containing information about the input data. Which state is assigned to which label is automatically determined during the learning process. The circuit learns under the rule that the quantum state made by $U(x, w, b)$ should be orthogonal if the label of two datas are different and the size of inner product should be one if the label of two datas are same. Determining the size of innerproduct is quite easy, it is the probabilty of $\|000....00\rangle$ state for following circuit.
+The front part of our circuit assigns the input data to a quantum state $U(x, w, b) \|000....00\rangle$, which corresponds to the correct label.
+Here, $w$ and $b$ are parameters being tuned during the learning process, and $x$ is parameter containing information about the input data.
+Each label is matched to some quantum state automatically during the learning process.
+The circuit learns under the rule that the quantum state made by $U(x, w, b)$ and $U(y, w, b)$ should be orthogonal if the label of two data $x$ and $y$ are different, while the size of inner product should be one if the label of $x$ and $y$ are identical. Determining the size of inner product is quite simple, as it is the probabilty of $\|000....00\rangle$ state for following circuit.
 
 ![preFuncPair](https://user-images.githubusercontent.com/124068470/221955848-55662ebd-9333-44eb-b27e-19bcc4b0366e.png)
 
