@@ -35,13 +35,6 @@ Since the resulting states with the data of same labels are similar, learning fo
 
 
 
-## Key advantages of the Project
-For a classical computer, the learning need not be perfect, since the result can be determined if the crieteria is satisfied. However, for quantum neural network, if the result can not be determined by a single shot, there is always a chance for statistical noise to change the result. Inspired by the Qhack problems requiring discrimination by one shot measurement, which our team solved with this scheme, 
-
-Thus, our project shows advantages for the problems where
-- situation 1
-- situation 2
-
 ## Code description
 preFunc function shows the structure of the quantum circuit. We followed the structure of EfficientSU2 in qiskit. 
 
