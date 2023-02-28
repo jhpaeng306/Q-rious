@@ -77,3 +77,23 @@ for i in range(150):
 pair_data = pair_data[index, :]
 pair_iris = pd.DataFrame(pair_data, columns=["A1","A2","A3","A4","B1","B2","B3","B4","label"])
 pair_iris.to_csv("post_iris.csv")
+
+
+
+N=150
+index = [i for i in range(N)]
+random.shuffle(index)
+cnt=0
+data = X_normalized.to_numpy()
+pair_data = np.zeros((N, 9))
+for i in range(150):
+    j=(i+1)%150
+    same = 1 if (i//50==j//50) else 0
+    pair_data[cnt][:4] = data[i,:]
+    pair_data[cnt][4:8] = data[j,:]
+    pair_data[cnt][8] = same
+    cnt=cnt+1
+
+pair_data = pair_data[index, :]
+pair_iris = pd.DataFrame(pair_data, columns=["A1","A2","A3","A4","B1","B2","B3","B4","label"])
+pair_iris.to_csv("simple_iris.csv")
