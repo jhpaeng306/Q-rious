@@ -7,7 +7,7 @@
 In our project, we built the Quantum Neural Network that works with only single shot by assigning wavefunction to lables. Our Quantum Neural Network classifies among $m$ labels, and is composed with two parts. 
 
 
-![preFuncPair](https://user-images.githubusercontent.com/124068470/221954308-d9f4fca1-8442-4633-8ff7-627670cf18b3.png)
+![preFuncPair](https://user-images.githubusercontent.com/124068470/221955848-55662ebd-9333-44eb-b27e-19bcc4b0366e.png)
 
 
 ### Assigning the wavefunction : $U(x, w, b)$
